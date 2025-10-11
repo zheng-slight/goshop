@@ -60,9 +60,9 @@ CREATE TABLE `focus`  (
 -- ----------------------------
 -- Records of focus
 -- ----------------------------
-INSERT INTO `focus` VALUES (14, '小米手机', 1, 'static/upload/20230411/1681220459500617100.png', 'http://www.xxx.com', 1001, 0, 1631677671);
+INSERT INTO `focus` VALUES (14, '小E手机', 1, 'static/upload/20230411/1681220459500617100.png', 'http://www.xxx.com', 1001, 0, 1631677671);
 INSERT INTO `focus` VALUES (15, '2022北京车展招展函下载', 1, '', 'http://www.xxx.com', 100, 1, 1631677692);
-INSERT INTO `focus` VALUES (16, '小米电视1', 2, 'static/upload/20230301/1677676829.jpg', 'http://www.xxx.com', 100, 0, 1631679244);
+INSERT INTO `focus` VALUES (16, '小E电视1', 2, 'static/upload/20230301/1677676829.jpg', 'http://www.xxx.com', 100, 0, 1631679244);
 INSERT INTO `focus` VALUES (17, '测', 1, 'static/upload/20230228/1677591510.png', 'www.baidu.com', 1003, 0, 1677591510);
 INSERT INTO `focus` VALUES (18, 'df', 1, 'static/upload/20230411/1681220429445020000.png', 'www.baidu.com', 100, 1, 1677591574);
 INSERT INTO `focus` VALUES (21, '鼠标', 0, '', '', 10, 1, 1677765620);
@@ -106,7 +106,7 @@ CREATE TABLE `goods`  (
 -- ----------------------------
 -- Records of goods
 -- ----------------------------
-INSERT INTO `goods` VALUES (35, '华为Plus', '华为Plus大法师的大法师的大法师的大法师的', '', 23, 100, 11, 163.21, 111.33, '11', '颜色:红色,白色,黄色 | 尺寸:41,42,43', '1,2', '1', 'static/upload/20230423/1682255187294832300.png', '11', '111', '第三大神大法师的大法师的大法师的大法师的', '大法师的大法师的大法师的大法师的大法师的大法师的', '<p><img src=\"http://bzhd-qymj-1312546108.cos.ap-chengdu.myqcloud.com/static/upload/20230408/1680958106694877300.png\" style=\"width: 300px;\" class=\"fr-fic fr-dib\">发顺丰乳沟如果大幅改善的风格</p><p><br></p><p><br></p>', 0, 1, 1, 1, 10, 1, 1, 1678370701);
+INSERT INTO `goods` VALUES (35, '华为Plus', '华为Plus大法师的大法师的大法师的大法师的', '', 23, 100, 11, 163.21, 111.33, '11', '颜色:红色,白色,黄色 | 尺寸:41,42,43', '1,2', '1', 'static/upload/20230423/1682255187294832300.png', '11', '111', '第三大神大法师的大法师的大法师的大法师的', '大法师的大法师的大法师的大法师的大法师的大法师的', '<p><img src=\"http://xxx-xxx-1312546108.cos.ap-chengdu.myqcloud.com/static/upload/20230408/1680958106694877300.png\" style=\"width: 300px;\" class=\"fr-fic fr-dib\">发顺丰乳沟如果大幅改善的风格</p><p><br></p><p><br></p>', 0, 1, 1, 1, 10, 1, 1, 1678370701);
 INSERT INTO `goods` VALUES (36, '华为Plus1', '华为Plus', '', 23, 100, 11, 163.21, 111.33, '11', '是多少', '1,2', '1', '', '11', '111', '第三大神', '大法师的', '发顺丰乳沟如果大幅改善的风格', 0, 1, 0, 1, 10, 1, 1, 1678546468);
 INSERT INTO `goods` VALUES (37, '华为Plus111', '华为Plus', '', 23, 100, 11, 163.21, 111.33, '11', '是多少', '1,2', '1', '', '11', '111', '第三大神', '大法师的', '<p>发顺丰乳沟如果大幅改善的风格</p>', 0, 1, 0, 1, 6, 1, 1, 1678546477);
 INSERT INTO `goods` VALUES (38, '海尔冰箱1', '海尔冰箱', '', 30, 100, 0, 111.00, 111.00, '', '颜色:红色,白色,黄色 | 尺寸:41,42,43', '1,5', '1', 'static/upload/20230313/1678712778377732600.png', '', '', '', '', '<p>的撒发刚阿萨德噶的搜嘎是搭嘎是的</p>', 0, 1, 1, 0, 11, 0, 1, 1678712778);
@@ -152,7 +152,7 @@ INSERT INTO `goods_attr` VALUES (101, 35, 10, 12, '颜色', 3, '红\r\n', 10, 16
 INSERT INTO `goods_attr` VALUES (102, 35, 10, 20, '性能', 2, '### 第一代骁龙®8+移动平台\r\nSoC 工艺：台积电4nm工艺制程 \\n\r\nCPU 主频：八核处理器，最高主频可达：3.2GHz \\n\r\nGPU ：Adreno™ GPU 图形处理器 \\n\r\nAI：第七代 AI 引擎 \\n', 10, 1682258609, 1);
 INSERT INTO `goods_attr` VALUES (103, 35, 10, 22, '内存与容量', 2, '## 12GB+512GB 最高可选\r\n运行内存：8GB / 12GB LPDDR5 高速内存（6400Mbps）\\n\r\n机身存储：256GB / 512GB UFS 3.1 高速存储 \\n', 10, 1682258609, 1);
 INSERT INTO `goods_attr` VALUES (104, 35, 10, 23, '外观容量', 1, '长度：163.17mm 宽度：74.97mm 厚度：9.06mm 重量：225g', 10, 1682258609, 1);
-INSERT INTO `goods_attr` VALUES (105, 35, 10, 24, '充电与电池', 2, '## 4860mAh(typ) / 4760mAh(min)\r\n内置单电芯高能量密度电池，不可拆卸 \\n\r\nUSB Type-C 双面充电接口 \\n\r\n手机支持 QC4 / QC3+ / QC3.0 / QC2.0 / PD3.0 / PD2.0 快充协议+MI FC 2.0 快充 \\n\r\n67W 小米澎湃秒充 / 50W 无线快充 / 10W 无线反充 \\n', 10, 1682258610, 1);
+INSERT INTO `goods_attr` VALUES (105, 35, 10, 24, '充电与电池', 2, '## 4860mAh(typ) / 4760mAh(min)\r\n内置单电芯高能量密度电池，不可拆卸 \\n\r\nUSB Type-C 双面充电接口 \\n\r\n手机支持 QC4 / QC3+ / QC3.0 / QC2.0 / PD3.0 / PD2.0 快充协议+MI FC 2.0 快充 \\n\r\n67W 小E澎湃秒充 / 50W 无线快充 / 10W 无线反充 \\n', 10, 1682258610, 1);
 INSERT INTO `goods_attr` VALUES (106, 35, 10, 25, '影像系统', 1, 'MIUI 13', 10, 1682258610, 1);
 INSERT INTO `goods_attr` VALUES (107, 35, 10, 26, '传感器', 1, '超声波距离传感器丨环境光传感器丨加速度传感器丨陀螺仪丨电子罗盘｜X 轴线性马达丨 红外线遥控器丨气压计丨后置光线（色温）传感器丨Flicker 传感器丨激光对焦传感器', 10, 1682258610, 1);
 
@@ -183,9 +183,9 @@ INSERT INTO `goods_cate` VALUES (23, '手机', '', '', '', 0, '', '', '手机', 
 INSERT INTO `goods_cate` VALUES (24, '电视', '', '', '', 0, '', '', '手机', 1, '10', 1631938196);
 INSERT INTO `goods_cate` VALUES (25, '笔记本 平板', '', '', '', 0, '', '', '手机', 1, '11', 1631938209);
 INSERT INTO `goods_cate` VALUES (26, '家电', '', '', '', 0, '', '', '手机', 1, '9', 1631938214);
-INSERT INTO `goods_cate` VALUES (27, '小米11', 'static/upload/20230411/1681221296101196600.png', '', '', 23, '', '小米11', '小米手机官网正品小米11推荐，小米手机小米11最新价格，有多种颜色可选，另有小米11详细介绍及图片，还有', 1, '9', 1631938291);
+INSERT INTO `goods_cate` VALUES (27, '小E11', 'static/upload/20230411/1681221296101196600.png', '', '', 23, '', '小E11', '小E手机官网正品小E11推荐，小E手机小E11最新价格，有多种颜色可选，另有小E11详细介绍及图片，还有', 1, '9', 1631938291);
 INSERT INTO `goods_cate` VALUES (28, 'Redmi 11A', 'static/upload/20230411/1681221312291691900.png', 'http://www.xxx.com', 'bbbb.html', 23, '', '防疫', '游戏必备', 1, '8', 1631938339);
-INSERT INTO `goods_cate` VALUES (29, '小米电视55寸', 'static/upload/20210918/1631938567.jpg', '', '', 24, '', '', '', 1, '10', 1631938567);
+INSERT INTO `goods_cate` VALUES (29, '小E电视55寸', 'static/upload/20210918/1631938567.jpg', '', '', 24, '', '', '', 1, '10', 1631938567);
 INSERT INTO `goods_cate` VALUES (30, '冰箱', 'static/upload/20210918/1631940993.jpg', 'http://www.xxx.com', '', 26, '', '', '', 1, '10', 1631938591);
 INSERT INTO `goods_cate` VALUES (35, '鼠标', 'static/upload/20230302/1677765818.jpg', 'www.baidu.com', '鼠标', 0, '', '鼠标', '鼠标', 1, '111', 1677765818);
 INSERT INTO `goods_cate` VALUES (36, '雷神鼠标', 'static/upload/20230302/1677766229.png', 'www.baidu.com', '', 35, '', '', '', 1, '102', 1677766229);
@@ -324,17 +324,17 @@ CREATE TABLE `nav`  (
 -- ----------------------------
 -- Records of nav
 -- ----------------------------
-INSERT INTO `nav` VALUES (1, '小米商城1', 'http://www.xxx.com', 2, 2, '36,35', 10, 1, 1592919226);
+INSERT INTO `nav` VALUES (1, '小E商城1', 'http://www.xxx.com', 2, 2, '36,35', 10, 1, 1592919226);
 INSERT INTO `nav` VALUES (2, 'MIUI', 'http://www.xxx.com', 1, 1, '1', 10, 1, 1592921999);
-INSERT INTO `nav` VALUES (3, '小米手机', 'https://shouji.mi.com/', 2, 2, '19,20', 10, 1, 1592922081);
-INSERT INTO `nav` VALUES (4, '小米电视', 'https://ds.mi.com/', 2, 2, '23,24', 10, 1, 1592922273);
+INSERT INTO `nav` VALUES (3, '小E手机', 'https://shouji.mi.com/', 2, 2, '19,20', 10, 1, 1592922081);
+INSERT INTO `nav` VALUES (4, '小E电视', 'https://ds.mi.com/', 2, 2, '23,24', 10, 1, 1592922273);
 INSERT INTO `nav` VALUES (5, '路由器', 'http://bbs.xxx.com', 2, 1, '25', 10, 1, 1592922331);
 INSERT INTO `nav` VALUES (8, '云服务', 'https://i.mi.com/', 1, 2, '2', 10, 1, 1593529309);
 INSERT INTO `nav` VALUES (9, '金融', 'https://jr.mi.com/?from=micom', 1, 1, '1', 10, 1, 1593529329);
 INSERT INTO `nav` VALUES (10, '有品', 'https://youpin.mi.com/', 1, 1, '1', 10, 1, 1593529346);
 INSERT INTO `nav` VALUES (11, '家电', '', 2, 1, '1', 10, 1, 1593529451);
 INSERT INTO `nav` VALUES (12, '智能电视', '', 2, 1, '1', 10, 1, 1593529470);
-INSERT INTO `nav` VALUES (14, '小米帮助中心', 'http://www.xxx.com', 3, 2, '12,13,14', 101, 1, 1634788777);
+INSERT INTO `nav` VALUES (14, '小E帮助中心', 'http://www.xxx.com', 3, 2, '12,13,14', 101, 1, 1634788777);
 
 -- ----------------------------
 -- Table structure for order
@@ -423,7 +423,7 @@ CREATE TABLE `setting`  (
 -- ----------------------------
 -- Records of setting
 -- ----------------------------
-INSERT INTO `setting` VALUES (1, '仿小米商城项目 ', 'static/upload/20230415/1681528708475407000.png', '小米1', '222222222', 'static/upload/20230415/1681528720094671700.png', '2422', '24', '24', '11111', 'AKIDDEyReaFdkbASTDAqFNEo79uObXCahX6O', '2nHVS7VcW9VaOvBAsJTN0NSGn56qITN3', 'oss-cn-beijing.aliyuncs.com', 'xxx', 0, 'http://bzhd-qymj-1312546108.cos.ap-chengdu.myqcloud.com/', '200,300,400');
+INSERT INTO `setting` VALUES (1, '仿小E商城项目 ', 'static/upload/20230415/1681528708475407000.png', '小E1', '222222222', 'static/upload/20230415/1681528720094671700.png', '2422', '24', '24', '11111', '小E', 'xxx', 'xxx-cn-beijing.aliyuncs.com', 'xxx', 0, 'http://xxx-xxx-1312546108.cos.ap-xxx.myqcloud.com/', '200,300,400');
 
 -- ----------------------------
 -- Table structure for user

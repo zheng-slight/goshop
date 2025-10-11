@@ -212,7 +212,7 @@ func (con SearchController) FilterQuery(c *gin.Context) {
 
 	//筛选
 	boolQ := elastic.NewBoolQuery()
-	boolQ.Must(elastic.NewMatchQuery("Title", "小米"))
+	boolQ.Must(elastic.NewMatchQuery("Title", "小E"))
 	boolQ.Filter(elastic.NewRangeQuery("Id").Gt(19)) //Id 大于19
 	boolQ.Filter(elastic.NewRangeQuery("Id").Lt(42)) //Id 小于42
 	searchResult, err := models.EsClient.Search().
