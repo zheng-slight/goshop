@@ -420,11 +420,7 @@ CREATE TABLE `setting`  (
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
--- ----------------------------
--- Records of setting
--- ----------------------------
-INSERT INTO `setting` VALUES (1, '仿小E商城项目 ', 'static/upload/20230415/1681528708475407000.png', '小E1', '222222222', 'static/upload/20230415/1681528720094671700.png', '2422', '24', '24', '11111', '小E', 'xxx', 'xxx-cn-beijing.aliyuncs.com', 'xxx', 0, 'http://xxx-xxx-1312546108.cos.ap-xxx.myqcloud.com/', '200,300,400');
-
+ 
 -- ----------------------------
 -- Table structure for user
 -- ----------------------------
