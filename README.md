@@ -52,7 +52,7 @@
 
 ## 拉取项目
 1. 拉取项目代码:
-***这里我是把项目放在D:\www\go\src目录下的,进入src目录,执行git clone命令拉取项目代码: [goshop.git](https://github.com/phoenix-zhou/goshop.git) ***
+***这里我是把项目放在D:\www\go\src目录下的,进入src目录,执行git clone命令拉取项目代码: [goshop.git](git@github.com:phoenix-zhou/goshop.git) ***
 2. 进入项目根目录: cd goshop
 3. 使用go mod tidy命令初始化项目依赖,步骤如下:
 (1).使用go mod init goshop 初始化项目, 生成go.mod文件
