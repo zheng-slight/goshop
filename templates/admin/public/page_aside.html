@@ -1,0 +1,48 @@
+<!-- 相当于给模板定义一个名字, define end 必须成对出现 -->
+{{ define "admin/public/page_aside.html" }}
+    <ul class="aside">
+        <!--  判断当前用户权限,并显示对应目录 -->
+        {{$isSuper := .isSuper}}
+        {{range $key, $value := .accessList}}
+            <!-- 是否超级管理员, 超级管理员显示全部 -->
+            {{if eq $isSuper 1}}
+                <li>
+                    <h4>{{$value.ModuleName}}</h4>
+                    <ul>
+                        {{range $k,$v := $value.AccessItem}}
+                            <!-- 判断权限类型: 2 菜单, 3 操作; 当Type=2时,才会显示菜单-->
+                            {{if eq $v.Type 2}}
+                                <li class="list-group-item">
+                                    <a href="/admin/{{$v.Url}}" target="rightMain">
+                                        {{$v.ActionName}}
+                                    </a>
+                                </li>
+                            {{end}}
+                        {{end}}
+                    </ul>
+                </li>
+            {{else}}
+                <!-- 判断用户是否有该权限 -->
+                {{if eq $value.Checked true}}
+                    <li>
+                        <h4>{{$value.ModuleName}}</h4>
+                        <ul>
+                            {{range $k,$v := $value.AccessItem}}
+                                {{if eq $v.Checked true}}
+                                    <!-- 判断权限类型: 2 菜单, 3 操作-->
+                                    {{if eq $v.Type 2}}
+                                        <li class="list-group-item">
+                                            <a href="/admin/{{$v.Url}}" target="rightMain">
+                                                {{$v.ActionName}}
+                                            </a>
+                                        </li>
+                                    {{end}}
+                                {{end}}
+                            {{end}}
+                        </ul>
+                    </li>
+                {{end}}
+            {{end}}
+        {{end}}
+    </ul>
+{{end}}

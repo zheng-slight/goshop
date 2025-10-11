@@ -1,0 +1,76 @@
+{{ define "frontend/product/list.html" }}
+    <!--加载顶部公共部分-->
+    {{ template "frontend/public/page_header.html" .}}
+    <!--加载中部导航-->
+    {{ template "frontend/public/middle_nav.html" .}}
+
+    <script type="text/javascript" src="/static/admin/js/jqPaginator.js"></script>
+    <link rel="stylesheet" href="/static/admin/bootstrap/css/bootstrap.css">
+    <!-- start danpin -->
+    <div class="danpin center">
+        <!--商品分类start-->
+        <div class="search-filter center">
+            <ul class="item show-less" id="list_item_class">
+                <span> 分类： </span>
+                {{$currentId := .currentCate.Id}}
+                {{range $key,$value := .subCate}}
+                    {{if eq $value.Link ""}}
+                        {{if eq $currentId $value.Id}}
+                            <li><a class="active" href="category{{$value.Id}}">{{$value.Title}}</a></li>
+                        {{else}}
+                            <li><a href="category{{$value.Id}}">{{$value.Title}}</a></li>
+                        {{end}}
+                    {{else}}
+                        <li><a href="{{$value.Link}}" target="_blank">{{$value.Title}}</a></li>
+                    {{end}}
+                {{end}}
+            </ul>
+        </div>
+        <!--商品分类end-->
+
+        <!--商品列表start-->
+        <div class="main center mb20">
+            {{range $key,$value := .goodsList}}
+                <div class="mingxing fl mb20" style="border:2px solid #fff;width:230px;cursor:pointer;"
+                     onmouseout="this.style.border='2px solid #fff'" onmousemove="this.style.border='2px solid red'">
+                    <div class="sub_mingxing">
+                        <a href="detail?id={{$value.Id}}" target="_blank">
+                            <img src="{{$value.GoodsImg | FormatImg}}" alt="{{$value.Title}}"/>
+                        </a>
+                    </div>
+                    <div class="pinpai"><a href="detail?id={{$value.Id}}" target="_blank">{{$value.Title}}</a></div>
+
+                    <div class="jiage">{{$value.Price}}元</div>
+                </div>
+            {{end}}
+
+
+        </div>
+        <!--商品列表end-->
+        <div class="clear"></div>
+
+        <!--商品分页-->
+        <div id="pagination" class="pagination fr">
+        </div>
+    </div>
+    {{template "frontend/public/page_footer.html" .}}
+
+    <script>
+
+        $(function () {
+            $('#pagination').jqPaginator({
+                totalPages: {{.totalPages}},
+                visiblePages: 10,
+                currentPage: {{.page}},
+                onPageChange: function (num, type) {
+                    if (type == "change") {
+                        location.href = "/category{{.currentCate.Id}}?page=" + num;
+                    }
+                }
+            });
+        })
+    </script>
+
+    </body>
+    </html>
+{{end}}
