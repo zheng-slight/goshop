@@ -77,24 +77,26 @@ func main() {
 	routers.FrontendRoutersInit(r)
 
 	//演示gopkg.in/ini.v1模块的使用
-	cfg, err := ini.Load("./conf/app.ini")
+	_, err := ini.Load("./conf/app.ini")
 	if err != nil {
 		fmt.Printf("Fail to read file: %v", err)
 		os.Exit(1)
+	} else {
+		fmt.Println("app.ini加载成功")
 	}
 	// 典型读取操作，默认分区可以使用空字符串表示
-	fmt.Println("获取配置根数据:", cfg.Section("").Key("app_name").String())
-	fmt.Println("获取配置mysql数据:", cfg.Section("mysql").Key("password").String())
-	fmt.Println("获取配置redis数据:", cfg.Section("redis").Key("port").String())
+	//fmt.Println("获取配置根数据:", cfg.Section("").Key("app_name").String())
+	//fmt.Println("获取配置mysql数据:", cfg.Section("mysql").Key("password").String())
+	//fmt.Println("获取配置redis数据:", cfg.Section("redis").Key("port").String())
 
 	//给ini写入数据
 	//修改某个值然后进行保存
-	cfg.Section("").Key("app_name").SetValue("app测试")
+	//cfg.Section("").Key("app_name").SetValue("app测试")
 	//写入一个新的配置
-	cfg.Section("").Key("app_mode").SetValue("production")
-	cfg.Section("redis").Key("database").SetValue("1")
+	//cfg.Section("").Key("app_mode").SetValue("production")
+	//cfg.Section("redis").Key("database").SetValue("1")
 
-	cfg.SaveTo("./conf/app.ini")
+	//cfg.SaveTo("./conf/app.ini")
 
 	r.Run() // 启动一个web服务
 }
