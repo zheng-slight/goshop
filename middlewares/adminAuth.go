@@ -30,10 +30,10 @@ func InitAdminAuthMiddleware(c *gin.Context) {
 	//session.Get获取返回的结果是一个空接口类型,所以需要进行类型断言: 判断userinfo是不是一个string
 	userinfoStr, ok := userinfo.(string)
 	if ok { // 说明是一个string
-		var userinfoStruct []models.Manager
+		var adminSession models.AdminSession
 		//把获取到的用户信息转换结构体
-		err := json.Unmarshal([]byte(userinfoStr), &userinfoStruct)
-		if err != nil || !(len(userinfoStruct) > 0 && userinfoStruct[0].Username != "") {
+		err := json.Unmarshal([]byte(userinfoStr), &adminSession)
+		if err != nil || adminSession.Username == "" {
 			if pathname != "/admin/login" && pathname != "/admin/dologin" && pathname != "/admin/captcha" {
 				//跳转到登录页面
 				c.Redirect(http.StatusFound, "/admin/login")
@@ -43,11 +43,11 @@ func InitAdminAuthMiddleware(c *gin.Context) {
 			// strings.Replace 字符串替换
 			urlPath := strings.Replace(pathname, "/admin/", "", 1)
 			//排除权限判断:不是超级管理员并且不在相关权限内
-			if userinfoStruct[0].IsSuper == 0 && !excludeAuthPath("/"+urlPath) {
+			if adminSession.IsSuper == 0 && !excludeAuthPath("/"+urlPath) {
 				//判断用户权限:当前用户权限是否可以访问url地址
 				//获取当前角色拥有的权限,并把权限id放在一个map对象中
 				roleAccess := []models.RoleAccess{}
-				models.DB.Where("role_id = ?", userinfoStruct[0].RoleId).Find(&roleAccess)
+				models.DB.Where("role_id = ?", adminSession.RoleId).Find(&roleAccess)
 				roleAccessMap := make(map[int]int)
 				for _, v := range roleAccess {
 					roleAccessMap[v.AccessId] = v.AccessId

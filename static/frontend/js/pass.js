@@ -1,196 +1,279 @@
 (function ($) {
-    $(function () {
-        loginApp.init();
-    })
+    "use strict";
+
+    var COUNTDOWN_SECONDS = 10;
+
+    function setLoading($btn, loading) {
+        if (!$btn || !$btn.length) {
+            return;
+        }
+        if (loading) {
+            $btn.data("originalText", $btn.text());
+            $btn.prop("disabled", true).text("处理中...");
+        } else {
+            var originalText = $btn.data("originalText");
+            if (originalText) {
+                $btn.text(originalText);
+            }
+            $btn.prop("disabled", false);
+        }
+    }
+
+    function setFieldError(id, message) {
+        var $input = $("#" + id);
+        var $error = $("#" + id + "-error");
+        if (message) {
+            if ($input.length) {
+                $input.attr("aria-invalid", "true");
+            }
+            if ($error.length) {
+                $error.text(message);
+            }
+        } else {
+            if ($input.length) {
+                $input.removeAttr("aria-invalid");
+            }
+            if ($error.length) {
+                $error.text("");
+            }
+        }
+    }
+
+    function setFormError($form, message) {
+        var $error = $form.find("#form-error");
+        if ($error.length) {
+            $error.text(message || "");
+        }
+    }
+
+    function clearErrors($form) {
+        $form.find("[aria-invalid]").removeAttr("aria-invalid");
+        $form.find(".field-error").text("");
+        setFormError($form, "");
+    }
+
     var loginApp = {
         init: function () {
-            this.getCaptcha();
-            this.captchaImgChage();
+            this.initCaptcha();
+            this.initLogin();
             this.initRegisterStep1();
             this.initRegisterStep2();
             this.initRegisterStep3();
-            this.initDoLogin();
         },
-        getCaptcha: function () { //获取图形验证码
+
+        getCaptcha: function () {
+            var $captchaId = $("#captchaId");
+            var $captchaImg = $("#captchaImg");
+            if (!$captchaId.length || !$captchaImg.length) {
+                return;
+            }
             $.get("/pass/captcha?t=" + Math.random(), function (response) {
-                $("#captchaId").val(response.captchaId)
-                $("#captchaImg").attr("src", response.captchaImage)
-            })
+                $captchaId.val(response.captchaId);
+                $captchaImg.attr("src", response.captchaImage);
+            });
         },
-        captchaImgChage: function () { //改变图形验证码
+
+        initCaptcha: function () {
             var _that = this;
             $("#captchaImg").click(function () {
-                _that.getCaptcha()
-            })
+                _that.getCaptcha();
+            });
+            this.getCaptcha();
         },
-        //注册第一步
-        //1.输入手机号以及图形验证码,前端校验是否合法
-        //2.点击 立即注册 按钮, 请求后台api,后台会判断手机号以及图形验证码是否符合要求,并发送手机验证码
-        initRegisterStep1: function () {
+
+        initLogin: function () {
             var _that = this;
-            //发送验证码
-            $("#registerButton").click(function () {
-                //验证验证码是否正确
-                var phone = $('#phone').val();
-                var verifyCode = $('#verifyCode').val();
-                var captchaId = $("#captchaId").val();
-                $(".error").html("")
-                var reg = /^[\d]{11}$/;
-                if (!reg.test(phone)) {
-                    $(".error").html("Error：手机号输入错误");
-                    return false;
-                }
-                if (verifyCode.length < 1) {
-                    $(".error").html("Error：图形验证码长度不合法")
-                    return false;
-                }
-                //请求后台api,校验输入的手机号以及图形验证码,并发送短信
-                $.get("/pass/sendCode", {
-                    "phone": phone,
-                    "verifyCode": verifyCode,
-                    "captchaId": captchaId
-                }, function (response) {
-                    if (response.success == true) {  //校验成功,进入注册第二步
-                        //跳转到下页面
-                        location.href = "/pass/registerStep2?sign=" + response.sign + "&verifyCode=" + verifyCode;
-                    } else {
-                        //改变验证码
-                        $(".error").html("Error：" + response.message + ",请重新输入!")
-                        //改变验证码
-                        _that.getCaptcha()
-                    }
-                })
+            $("#loginForm").submit(function (event) {
+                event.preventDefault();
+                var $form = $(this);
+                clearErrors($form);
 
-            })
-        },
-        // 注册第二步
-        //输入短信验证码,校验,成功则跳转到注册第三步
-        //还可以重新发送短信验证码
-        initRegisterStep2: function () {
-            $(function () {
-                var timer = 10;
-
-                function Countdown() {  // 重新发送短信时间
-                    if (timer >= 1) {
-                        timer -= 1;
-                        $("#sendCode").attr('disabled', true);
-                        $("#sendCode").html('重新发送(' + timer + ')');
-                        setTimeout(function () {
-                            Countdown();
-                        }, 1000);
-                    } else {
-                        $("#sendCode").attr('disabled', false)
-                        $("#sendCode").html('重新发送');
-                    }
-                }
-
-                Countdown();
-                //重新发送短信
-                $("#sendCode").click(function () {
-                    timer = 10;
-                    Countdown();
-                    var phone = $("#phone").val()
-                    var verifyCode = $("#verifyCode").val()
-                    var captchaId = "resend"  //重新发送标签
-
-                    //重新请求接口发送短信
-                    $.get("/pass/sendCode", {
-                        "phone": phone,
-                        "verifyCode": verifyCode,
-                        "captchaId": captchaId
-                    }, function (response) {
-                        console.log(response)
-                    })
-                })
-            })
-
-            //验证验证码
-            $(function () {
-                $("#nextStep").click(function (e) {
-                    $(".error").html()
-                    var sign = $('#sign').val();
-                    var smsCode = $('#smsCode').val();
-                    //请求api,校验输入短信是否正确,并跳转到注册第三步
-                    $.get('/pass/validateSmsCode', {sign: sign, smsCode: smsCode}, function (response) {
-                        if (response.success == true) {
-                            location.href = "/pass/registerStep3?sign=" + sign + "&smsCode=" + smsCode
-                        } else {
-                            $(".error").html("Error：" + response.message)
-                        }
-                    })
-                })
-
-                $("#returnButton").click(function () {
-                    location.href = "/pass/registerStep1"
-                })
-            })
-        },
-        initRegisterStep3: function () { //注册第三步: 设置密码注册用户
-            $(function () {
-                $("#form").submit(function () {
-                    $(".error").html("")
-                    var password = $('#password').val();
-                    var rpassword = $('#rpassword').val();
-
-                    if (password.length < 6) {
-                        $(".error").html("Error：密码的长度不能小于6位")
-                        return false;
-                    }
-                    if (password != rpassword) {
-                        $(".error").html("Error：密码和确认密码不一致")
-                        return false;
-                    }
-                    return true;
-
-                })
-            })
-        },
-        initDoLogin: function () { //登录操作
-            var _that = this;
-            $("#doLogin").click(function (e) {
-                $(".error").html("")
-                var phone = $('#phone').val();
-                var password = $('#password').val();
-                var captchaId = $('#captchaId').val();
+                var phone = $.trim($("#phone").val());
+                var password = $("#password").val();
                 var captchaVal = $("#captchaVal").val();
-                //获取返回上一页的地址
+                var captchaId = $("#captchaId").val();
                 var prevPage = $("#prevPage").val();
 
-                var reg = /^[\d]{11}$/;
-                if (!reg.test(phone)) {
-                    $(".error").html('Error:手机号输入错误');
-                    return false;
+                if (!/^[\d]{11}$/.test(phone)) {
+                    setFieldError("phone", "手机号输入错误");
+                    $("#phone").focus();
+                    return;
                 }
                 if (password.length < 6) {
-                    $(".error").html('Error:密码长度不合法');
-                    return false;
+                    setFieldError("password", "密码长度不合法");
+                    $("#password").focus();
+                    return;
+                }
+                if (!captchaVal) {
+                    setFieldError("captchaVal", "验证码不能为空");
+                    $("#captchaVal").focus();
+                    return;
                 }
 
-                if (captchaVal.length < 1) {
-                    $(".error").html('Error:验证码长度不合法');
-                    return false;
-                }
-                //ajax请求
-                $.post('/pass/doLogin', {
+                var $btn = $("#doLogin");
+                setLoading($btn, true);
+                $.post("/pass/doLogin", {
                     phone: phone,
                     password: password,
                     captchaVal: captchaVal,
                     captchaId: captchaId
-                }, function (response) {  //登录成功跳转到首页
-                    if (response.success == true) {
-                        if (prevPage == "") {
-                            location.href = "/";
-                        } else {
-                            location.href = prevPage;
-                        }
+                }, function (response) {
+                    setLoading($btn, false);
+                    if (response.success === true) {
+                        location.href = prevPage || "/";
                     } else {
-                        $(".error").html("Error：" + response.message + ",请重新输入!")
-                        //改变验证码
+                        setFormError($form, response.message + "，请重新输入");
                         _that.getCaptcha();
+                        $("#captchaVal").val("");
                     }
-                })
-            })
-        }
-    }
-})($)
+                }).fail(function () {
+                    setLoading($btn, false);
+                    setFormError($form, "网络异常，请稍后重试");
+                });
+            });
+        },
 
+        initRegisterStep1: function () {
+            var _that = this;
+            $("#registerForm").submit(function (event) {
+                event.preventDefault();
+                var $form = $(this);
+                clearErrors($form);
+
+                var phone = $.trim($("#phone").val());
+                var verifyCode = $("#verifyCode").val();
+                var captchaId = $("#captchaId").val();
+
+                if (!/^[\d]{11}$/.test(phone)) {
+                    setFieldError("phone", "手机号输入错误");
+                    $("#phone").focus();
+                    return;
+                }
+                if (!verifyCode) {
+                    setFieldError("verifyCode", "图形验证码不能为空");
+                    $("#verifyCode").focus();
+                    return;
+                }
+
+                var $btn = $("#registerButton");
+                setLoading($btn, true);
+                $.get("/pass/sendCode", {
+                    phone: phone,
+                    verifyCode: verifyCode,
+                    captchaId: captchaId
+                }, function (response) {
+                    setLoading($btn, false);
+                    if (response.success === true) {
+                        location.href = "/pass/registerStep2?sign=" + encodeURIComponent(response.sign) + "&verifyCode=" + encodeURIComponent(verifyCode);
+                    } else {
+                        setFormError($form, response.message + "，请重新输入");
+                        _that.getCaptcha();
+                        $("#verifyCode").val("");
+                    }
+                }).fail(function () {
+                    setLoading($btn, false);
+                    setFormError($form, "网络异常，请稍后重试");
+                });
+            });
+        },
+
+        initRegisterStep2: function () {
+            var timer = COUNTDOWN_SECONDS;
+            var countdownTimer = null;
+            var $sendCode = $("#sendCode");
+
+            function renderCountdown() {
+                if (timer >= 1) {
+                    $sendCode.prop("disabled", true).text("重新发送(" + timer + ")");
+                } else {
+                    $sendCode.prop("disabled", false).text("重新发送");
+                }
+            }
+
+            function startCountdown() {
+                if (countdownTimer) {
+                    clearInterval(countdownTimer);
+                }
+                timer = COUNTDOWN_SECONDS;
+                renderCountdown();
+                countdownTimer = setInterval(function () {
+                    timer -= 1;
+                    renderCountdown();
+                    if (timer <= 0) {
+                        clearInterval(countdownTimer);
+                        countdownTimer = null;
+                    }
+                }, 1000);
+            }
+
+            $sendCode.click(function () {
+                startCountdown();
+                $.get("/pass/sendCode", {
+                    phone: $("#phone").val(),
+                    verifyCode: $("#verifyCode").val(),
+                    captchaId: "resend"
+                });
+            });
+
+            $("#smsForm").submit(function (event) {
+                event.preventDefault();
+                var $form = $(this);
+                clearErrors($form);
+
+                var sign = $("#sign").val();
+                var smsCode = $("#smsCode").val();
+
+                if (!smsCode) {
+                    setFieldError("smsCode", "请输入短信验证码");
+                    $("#smsCode").focus();
+                    return;
+                }
+
+                var $btn = $("#nextStep");
+                setLoading($btn, true);
+                $.get("/pass/validateSmsCode", { sign: sign, smsCode: smsCode }, function (response) {
+                    setLoading($btn, false);
+                    if (response.success === true) {
+                        location.href = "/pass/registerStep3?sign=" + encodeURIComponent(sign) + "&smsCode=" + encodeURIComponent(smsCode);
+                    } else {
+                        setFormError($form, response.message);
+                    }
+                }).fail(function () {
+                    setLoading($btn, false);
+                    setFormError($form, "网络异常，请稍后重试");
+                });
+            });
+
+            $("#returnButton").click(function () {
+                location.href = "/pass/registerStep1";
+            });
+
+            startCountdown();
+        },
+
+        initRegisterStep3: function () {
+            $("#form").submit(function () {
+                clearErrors($(this));
+
+                var password = $("#password").val();
+                var rpassword = $("#rpassword").val();
+
+                if (password.length < 6) {
+                    setFieldError("password", "密码的长度不能小于6位");
+                    $("#password").focus();
+                    return false;
+                }
+                if (password !== rpassword) {
+                    setFieldError("rpassword", "两次输入的密码不一致");
+                    $("#rpassword").focus();
+                    return false;
+                }
+                return true;
+            });
+        }
+    };
+
+    $(function () {
+        loginApp.init();
+    });
+})(jQuery);

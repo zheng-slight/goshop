@@ -60,32 +60,15 @@ func (con BaseController) Render(c *gin.Context, tpl string, data map[string]int
 		redisCache.Set("middleNavList", middleNavList, 3600)
 	}
 
-	//获取Cookie里面保存的用户信息
-	user := models.User{}
-	isLogin := models.Cookie.Get(c, "user", &user)
-	var userinfo string
-	if isLogin && len(user.Phone) == 11 {
-		userinfo = fmt.Sprintf(`<li class="userinfo">
-			<a href="#">%v</a>		
-			<i class="i"></i>
-			<ol>
-				<li><a href="/user">个人中心</a></li>
-				<li><a href="#">喜欢</a></li>
-				<li><a href="/pass/loginOut">退出登录</a></li>
-			</ol>								
-		</li> `, user.Phone)
-	} else {
-		userinfo = fmt.Sprintf(`<li><a href="/pass/login">登录</a></li>
-		<li>|</li>
-		<li><a href="/pass/registerStep1" target="_blank" >注册</a></li>
-		<li>|</li>`)
-	}
+	//获取session里面保存的用户信息, 前端通过独立模板渲染
+	user, isLogin := models.GetUserBySession(c)
 
 	renderData := gin.H{
 		"topNavList":    topNavList,
 		"goodsCateList": goodsCateList,
 		"middleNavList": middleNavList,
-		"userinfo":      userinfo,
+		"isLogin":       isLogin,
+		"user":          user,
 	}
 
 	for key, v := range data {
@@ -95,7 +78,7 @@ func (con BaseController) Render(c *gin.Context, tpl string, data map[string]int
 	c.HTML(http.StatusOK, tpl, renderData)
 }
 
-//发送短信功能
+// 发送短信功能
 func (con BaseController) SmsTencent(c *gin.Context) {
 	//获取电话号码
 	phone := "19950326585"

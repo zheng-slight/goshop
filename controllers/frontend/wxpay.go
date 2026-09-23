@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/objcoding/wxpay"
 	qrcode "github.com/skip2/go-qrcode"
@@ -11,16 +12,16 @@ import (
 
 type WxpayController struct{}
 
-//微信支付
+// 微信支付
 func (con WxpayController) Wxpay(c *gin.Context) {
 	//1、获取订单号 判断此订单号是否值当前用户的
 	//2、获取订单里面的支付信息
 	//1、配置基本信息
 	account := wxpay.NewAccount(
-		"wx7xxx6e4",  // appId
-		"150xxx",  //商户id
-		"zhongyxxx66",  //密钥
-		false,
+		"wx7xxx6e4",   // appId
+		"150xxx",      //商户id
+		"zhongyxxx66", //密钥
+		true,          //false：使用生产环境（正式支付）true：使用沙箱环境（用于开发测试，模拟支付流程）
 	)
 	client := wxpay.NewClient(account)
 

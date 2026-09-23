@@ -19,7 +19,6 @@ import (
 )
 
 func main() {
-	fmt.Println("test \n")
 
 	//初始化路由,会设置默认中间件:engine.Use(Logger(), Recovery())，可以使用gin.New()来设置路由
 	r := gin.Default()

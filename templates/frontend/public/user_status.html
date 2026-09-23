@@ -1,0 +1,17 @@
+{{ define "frontend/public/user_status.html" }}
+{{ if .isLogin }}
+    <li class="userinfo">
+        <a href="#">{{ .user.Phone }}</a>
+        <i class="i" aria-hidden="true"></i>
+        <ol>
+            <li><a href="/user">个人中心</a></li>
+            <li><a href="#">喜欢</a></li>
+            <li><a href="/pass/loginOut">退出登录</a></li>
+        </ol>
+    </li>
+{{ else }}
+    <li><a href="/pass/login">登录</a></li>
+    <li aria-hidden="true">|</li>
+    <li><a href="/pass/registerStep1">注册</a></li>
+{{ end }}
+{{ end }}

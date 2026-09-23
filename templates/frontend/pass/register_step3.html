@@ -1,56 +1,51 @@
 {{ define "frontend/pass/register_step3.html" }}
 <!DOCTYPE html>
-<html>
-	<head>
-		<meta charset="UTF-8">
-        <meta name="author" content="order by dede58.com"/>
-		<title>用户注册</title>
-		<link rel="stylesheet" href="/static/frontend/css/pass.css" />
-		<script src="/static/frontend/js/jquery-1.10.1.js"></script>
-		<script src="/static/frontend/js/pass.js"></script>
-	</head>
-	<body class="register_page">
-		
-			<div class="regist">
-				<div class="regist_center">
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="author" content="order by dede58.com"/>
+	<title>用户注册</title>
+	<link rel="stylesheet" href="/static/frontend/css/pass.css" />
+	<script src="/static/frontend/js/jquery-1.10.1.js"></script>
+	<script src="/static/frontend/js/pass.js"></script>
+</head>
+<body class="register_page">
+	<header class="auth-header">
+		<a class="brand" href="/" aria-label="商城首页">
+			<img src="/static/frontend/image/logo_top.png" alt="nest小E">
+		</a>
+	</header>
 
-					<div class="logo">
-						<img src="/static/frontend/image/logo_top.png" alt="nest小E">
-					</div>
-					<div class="regist_top">
-							<h2>注册账户</h2>
-					</div>
-					<div class="regist_main center">
-						<p>请输入您注册账户的密码</p>
-						<br>
-						<br>
-						<div class="error"></div>
-
-						<form action="/pass/doRegister" method="post" id="form">		
-														
-							<input type="hidden" name="sign" value="{{.sign}}" />
-							<input type="hidden" name="smsCode"  value="{{.smsCode}}"/>
-							<div>
-								<input class="form_input" type="password" id="password" name="password" placeholder="请输入密码"/>
-							
-							</div>
-
-							<div>
-								<input class="form_input" type="password" id="rpassword" name="rpassword" placeholder="请输入确认密码"/>
-							
-							</div>
-
-							<div class="regist_submit">
-									<input class="submit" type="submit" name="submit" value="完成注册" >
-
-							</div>
-						</form>
-					</div>
-					
-					
-				</div>
+	<main class="auth-main" id="main">
+		<section class="auth-card" aria-labelledby="register-title">
+			<div class="auth-heading">
+				<h1 id="register-title">注册账户</h1>
+				<p>请设置您注册账户的密码</p>
 			</div>
-		
-	</body>
+
+			<form action="/pass/doRegister" method="post" id="form" novalidate>
+				<input type="hidden" name="sign" value="{{.sign}}" />
+				<input type="hidden" name="smsCode" value="{{.smsCode}}"/>
+
+				<div class="field">
+					<label for="password">密码</label>
+					<input class="form_input" type="password" id="password" name="password" autocomplete="new-password" placeholder="请输入密码" aria-describedby="password-error">
+					<p class="field-error" id="password-error" role="alert"></p>
+				</div>
+
+				<div class="field">
+					<label for="rpassword">确认密码</label>
+					<input class="form_input" type="password" id="rpassword" name="rpassword" autocomplete="new-password" placeholder="请再次输入密码" aria-describedby="rpassword-error">
+					<p class="field-error" id="rpassword-error" role="alert"></p>
+				</div>
+
+				<div class="form-error" id="form-error" role="alert" aria-live="polite"></div>
+
+				<button class="submit" type="submit">完成注册</button>
+			</form>
+		</section>
+	</main>
+</body>
 </html>
 {{end}}

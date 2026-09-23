@@ -13,12 +13,12 @@ type LoginController struct {
 	BaseController
 }
 
-//进入登录页面
+// 进入登录页面
 func (con LoginController) Index(c *gin.Context) {
 	c.HTML(http.StatusOK, "admin/login/login.html", gin.H{})
 }
 
-//执行登录操作
+// 执行登录操作
 func (con LoginController) DoIndex(c *gin.Context) {
 	//获取表单中的数据
 	captchaId := c.PostForm("captchaId")     // 验证码id
@@ -30,15 +30,18 @@ func (con LoginController) DoIndex(c *gin.Context) {
 	// 1.判断验证码是否验证成功
 	if flag := models.VerifyCaptcha(captchaId, verifyValue); flag {
 		//2.查询数据库,判断用户以及密码是否正确
-		userinfo := []models.Manager{}
-		password = models.Md5(password)
-		models.DB.Where("username = ? and password = ? ", username, password).Find(&userinfo)
-		if len(userinfo) > 0 {
-			//3.执行登录,保存用户信息,执行跳转操作
+		manager := models.Manager{}
+		models.DB.Where("username = ?", username).First(&manager)
+		if manager.Username != "" && models.VerifyPassword(password, manager.Password) {
+			//3.执行登录,只保存非敏感字段,执行跳转操作
 			session := sessions.Default(c)
-			//注意: session.Set没法保存结构体对应的切片,所以需要把结构体转换成json字符串
-			userinfoSlice, _ := json.Marshal(userinfo)
-			session.Set("userinfo_admin", string(userinfoSlice))
+			adminSession, _ := json.Marshal(models.AdminSession{
+				Id:       manager.Id,
+				Username: manager.Username,
+				RoleId:   manager.RoleId,
+				IsSuper:  manager.IsSuper,
+			})
+			session.Set("userinfo_admin", string(adminSession))
 			session.Save()
 			con.Success(c, "登录成功", "/admin")
 		} else {
@@ -49,9 +52,9 @@ func (con LoginController) DoIndex(c *gin.Context) {
 	}
 }
 
-//获取验证码,验证验证码
+// 获取验证码,验证验证码
 func (con LoginController) Captcha(c *gin.Context) {
-	id, b64s, err := models.MakeCaptcha(50, 100 ,1)
+	id, b64s, err := models.MakeCaptcha(50, 100, 1)
 	if err != nil {
 		fmt.Println(err)
 	}

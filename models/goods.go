@@ -36,7 +36,8 @@ func (Goods) TableName() string {
 	return "goods"
 }
 
-/**
+/*
+*
 根据分类id,商品类型获取分类下面的数据
 */
 func GetGoodsByCategory(cateId int, goodsType string, limitNum int) []Goods {
@@ -46,7 +47,7 @@ func GetGoodsByCategory(cateId int, goodsType string, limitNum int) []Goods {
 	var tempSlice []int
 	if goodsCate.Pid == 0 { // 说明是顶级分类,则需要获取其下面的二级分类
 		goodsCateList := []GoodsCate{}
-		DB.Where("pid = ?", goodsCate.Id).Find(&goodsCate)
+		DB.Where("pid = ?", goodsCate.Id).Find(&goodsCateList)
 		//把二级分类id存入切片
 		for i := 0; i < len(goodsCateList); i++ {
 			tempSlice = append(tempSlice, goodsCateList[i].Id)
@@ -57,14 +58,14 @@ func GetGoodsByCategory(cateId int, goodsType string, limitNum int) []Goods {
 
 	//通过商品类型,拼接条件
 	switch goodsType {
-		case "is_best":
-			where += " AND is_best = 1"
-		case "is_hot":
-			where += " AND is_hot = 1"
-		case "is_new":
-			where += " AND is_new = 1"
-		default:
-			break
+	case "is_best":
+		where += " AND is_best = 1"
+	case "is_hot":
+		where += " AND is_hot = 1"
+	case "is_new":
+		where += " AND is_new = 1"
+	default:
+		break
 	}
 	goodsList := []Goods{}
 	DB.Where(where, tempSlice).Order("sort DESC").Select("id, title, price, goods_img, sub_title").Limit(limitNum).Find(&goodsList)

@@ -21,7 +21,7 @@ func (con ManagerController) Index(c *gin.Context) {
 	})
 }
 
-//添加管理员
+// 添加管理员
 func (con ManagerController) Add(c *gin.Context) {
 	//获取角色
 	roleList := []models.Role{}
@@ -31,7 +31,7 @@ func (con ManagerController) Add(c *gin.Context) {
 	})
 }
 
-//添加管理员:提交
+// 添加管理员:提交
 func (con ManagerController) DoAdd(c *gin.Context) {
 	//获取角色id,判断是否合法
 	roleId, err := models.Int(c.PostForm("role_id"))
@@ -60,9 +60,14 @@ func (con ManagerController) DoAdd(c *gin.Context) {
 	}
 
 	//实例化Manager,执行增加管理员
+	hashPassword, err := models.HashPassword(password)
+	if err != nil {
+		con.Error(c, "密码加密失败", "/admin/manager/add")
+		return
+	}
 	manager := models.Manager{
 		Username: username,
-		Password: models.Md5(password),
+		Password: hashPassword,
 		Email:    email,
 		Mobile:   mobile,
 		AddTime:  int(models.GetUnix()),
@@ -77,7 +82,7 @@ func (con ManagerController) DoAdd(c *gin.Context) {
 	con.Success(c, "添加管理员成功", "/admin/manager")
 }
 
-//编辑管理员
+// 编辑管理员
 func (con ManagerController) Edit(c *gin.Context) {
 	//获取管理员
 	id, err := models.Int(c.Query("id"))
@@ -89,7 +94,7 @@ func (con ManagerController) Edit(c *gin.Context) {
 	models.DB.Find(&manager)
 
 	if manager.Username == "" {
-		con.Error(c, "管理员#" + models.String(id) + "不存在", "/admin/manager")
+		con.Error(c, "管理员#"+models.String(id)+"不存在", "/admin/manager")
 		return
 	}
 	//获取所有角色
@@ -102,7 +107,7 @@ func (con ManagerController) Edit(c *gin.Context) {
 	})
 }
 
-//编辑管理员提交
+// 编辑管理员提交
 func (con ManagerController) DoEdit(c *gin.Context) {
 	//获取管理员id,并判断
 	id, err := models.Int(c.PostForm("id"))
@@ -133,10 +138,15 @@ func (con ManagerController) DoEdit(c *gin.Context) {
 	if password != "" {
 		//判断密码长度
 		if len(password) < 6 {
-			con.Error(c, "密码长度不合法", "/admin/manager/edit?id" + models.String(id))
+			con.Error(c, "密码长度不合法", "/admin/manager/edit?id"+models.String(id))
 			return
 		}
-		manager.Password = models.Md5(password)
+		hashPassword, err := models.HashPassword(password)
+		if err != nil {
+			con.Error(c, "密码加密失败", "/admin/manager/edit?id="+models.String(id))
+			return
+		}
+		manager.Password = hashPassword
 	}
 	//保存
 	err = models.DB.Save(&manager).Error
@@ -147,7 +157,7 @@ func (con ManagerController) DoEdit(c *gin.Context) {
 	con.Success(c, "修改数据成功", "/admin/manager")
 }
 
-//删除
+// 删除
 func (con ManagerController) Delete(c *gin.Context) {
 	//获取提交的表单数据
 	id, err := models.Int(c.Query("id"))

@@ -23,9 +23,9 @@ func (con MainController) Index(c *gin.Context) {
 	userinfoStr, ok := userinfo.(string)
 	if ok { // 说明是一个string
 		//1.获取用户信息
-		var userinfoStruct []models.Manager
+		var adminSession models.AdminSession
 		//把获取到的用户信息转换结构体
-		json.Unmarshal([]byte(userinfoStr), &userinfoStruct)
+		json.Unmarshal([]byte(userinfoStr), &adminSession)
 
 		//获取所有权限列表
 		accessList := []models.Access{}
@@ -35,7 +35,7 @@ func (con MainController) Index(c *gin.Context) {
 
 		//获取当前角色拥有的权限,并把权限id放在一个map对象中
 		roleAccess := []models.RoleAccess{}
-		models.DB.Where("role_id = ?", userinfoStruct[0].RoleId).Find(&roleAccess)
+		models.DB.Where("role_id = ?", adminSession.RoleId).Find(&roleAccess)
 		roleAccessMap := make(map[int]int)
 		for _, v := range roleAccess {
 			roleAccessMap[v.AccessId] = v.AccessId
@@ -54,8 +54,8 @@ func (con MainController) Index(c *gin.Context) {
 		}
 
 		c.HTML(http.StatusOK, "admin/main/index.html", gin.H{
-			"username": userinfoStruct[0].Username,
-			"isSuper": userinfoStruct[0].IsSuper,  // 是否超级管理员, 超级管理员显示全部
+			"username":   adminSession.Username,
+			"isSuper":    adminSession.IsSuper, // 是否超级管理员, 超级管理员显示全部
 			"accessList": accessList,
 		})
 	} else {
@@ -67,7 +67,7 @@ func (con MainController) Welcome(c *gin.Context) {
 	c.HTML(http.StatusOK, "admin/main/welcome.html", gin.H{})
 }
 
-//公共方法:改变表状态的
+// 公共方法:改变表状态的
 func (con MainController) ChangeStatus(c *gin.Context) {
 	id, err := models.Int(c.Query("id"))
 	if err != nil {
@@ -81,7 +81,7 @@ func (con MainController) ChangeStatus(c *gin.Context) {
 	field := c.Query("field")
 
 	//修改
-	err1 := models.DB.Exec("update "+ table +" set " + field + " = ABS(" + field + " - 1) where id = ?", id).Error
+	err1 := models.DB.Exec("update "+table+" set "+field+" = ABS("+field+" - 1) where id = ?", id).Error
 	if err1 != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"success": false,
@@ -95,7 +95,7 @@ func (con MainController) ChangeStatus(c *gin.Context) {
 	})
 }
 
-//公共方法:改变排序数字
+// 公共方法:改变排序数字
 func (con MainController) ChangeNum(c *gin.Context) {
 	id, err := models.Int(c.Query("id"))
 	if err != nil {
@@ -110,7 +110,7 @@ func (con MainController) ChangeNum(c *gin.Context) {
 	num := c.Query("num")
 
 	//修改
-	err1 := models.DB.Exec("update "+ table +" set " + field + " = " + num + " where id = ?", id).Error
+	err1 := models.DB.Exec("update "+table+" set "+field+" = "+num+" where id = ?", id).Error
 	if err1 != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"success": false,
@@ -124,8 +124,8 @@ func (con MainController) ChangeNum(c *gin.Context) {
 	})
 }
 
-//清除缓存
-func (con MainController) FlushAll(c *gin.Context)  {
+// 清除缓存
+func (con MainController) FlushAll(c *gin.Context) {
 	redisCache := models.RedisCache{}
 	redisCache.FlushAll()
 	con.Success(c, "清除缓存成功", "/admin")

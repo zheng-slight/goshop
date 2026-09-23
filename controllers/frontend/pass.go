@@ -18,7 +18,7 @@ type PassController struct {
 	BaseController
 }
 
-//获取验证码
+// 获取验证码
 func (con PassController) Captcha(c *gin.Context) {
 	id, b64s, err := models.MakeCaptcha(50, 120, 1)
 	//判断生成验证码是否错误
@@ -31,7 +31,7 @@ func (con PassController) Captcha(c *gin.Context) {
 	})
 }
 
-//登录页面
+// 登录页面
 func (con PassController) Login(c *gin.Context) {
 	//上一页地址
 	prevPage := c.Request.Referer()
@@ -41,14 +41,14 @@ func (con PassController) Login(c *gin.Context) {
 	})
 }
 
-//注册第一步页面:
-//1.进入注册第一步页面,输入有效手机号以及图形验证码
-//2.点击立即注册,进入注册第二步
+// 注册第一步页面:
+// 1.进入注册第一步页面,输入有效手机号以及图形验证码
+// 2.点击立即注册,进入注册第二步
 func (con PassController) RegisterStep1(c *gin.Context) {
 	c.HTML(http.StatusOK, "frontend/pass/register_step1.html", gin.H{})
 }
 
-//注册第二步页面
+// 注册第二步页面
 func (con PassController) RegisterStep2(c *gin.Context) {
 	sign := c.Query("sign")
 	verifyCode := c.Query("verifyCode")
@@ -74,8 +74,8 @@ func (con PassController) RegisterStep2(c *gin.Context) {
 	}
 }
 
-//注册第三步:
-//校验sign以及短信验证码,判断,并根据结果跳转
+// 注册第三步:
+// 校验sign以及短信验证码,判断,并根据结果跳转
 func (con PassController) RegisterStep3(c *gin.Context) {
 	//获取sign页面标签以及短信验证码
 	sign := c.Query("sign")
@@ -125,7 +125,7 @@ func (con PassController) RegisterStep3(c *gin.Context) {
 	}
 }
 
-//注册操作
+// 注册操作
 func (con PassController) DoRegister(c *gin.Context) {
 	//1、获取表单传过来的数据
 	sign := c.PostForm("sign")
@@ -180,10 +180,10 @@ func (con PassController) DoRegister(c *gin.Context) {
 			AddTime:  int(models.GetUnix()),
 			Status:   1,
 		}
-		models.DB.Create(&user)
-
-		//5、执行登录
-		models.Cookie.Set(c, "user", user)
+		if err := models.DB.Create(&user).Error; err == nil {
+			//5、执行登录: session 只保存用户 id
+			_ = models.SetUserSession(c, user.Id)
+		}
 		c.Redirect(http.StatusFound, "/")
 	} else {
 		c.Redirect(http.StatusFound, "/")
@@ -191,13 +191,13 @@ func (con PassController) DoRegister(c *gin.Context) {
 
 }
 
-//发送短信
+// 发送短信
 func (con PassController) SendCode(c *gin.Context) {
 	//获取手机号,验证码以及验证码id
 	phone := c.Query("phone")
 	verifyCode := c.Query("verifyCode")
 	captchaId := c.Query("captchaId")
-	if captchaId == "resend" {  //重新发送
+	if captchaId == "resend" { //重新发送
 		// 1、注册第二个页面发送验证码的时候需要验证图形验证码
 		sessionDefault := sessions.Default(c)
 		sessionVerifyCode := sessionDefault.Get("verifyCode")
@@ -372,7 +372,7 @@ func (con PassController) SendCode(c *gin.Context) {
 	}
 }
 
-//验证验证码
+// 验证验证码
 func (con PassController) ValidateSmsCode(c *gin.Context) {
 	//获取短信验验证码以及页面标签
 	sign := c.Query("sign")
@@ -425,7 +425,7 @@ func (con PassController) ValidateSmsCode(c *gin.Context) {
 	})
 }
 
-//登录操作
+// 登录操作
 func (con PassController) DoLogin(c *gin.Context) {
 	phone := strings.Trim(c.PostForm("phone"), " ")
 	password := c.PostForm("password")
@@ -446,8 +446,8 @@ func (con PassController) DoLogin(c *gin.Context) {
 	userList := []models.User{}
 	models.DB.Where("phone = ? AND password = ?", phone, password).Find(&userList)
 	if len(userList) > 0 {
-		//执行登录
-		models.Cookie.Set(c, "user", userList[0])
+		//执行登录: session 只保存用户 id
+		_ = models.SetUserSession(c, userList[0].Id)
 		c.JSON(http.StatusOK, gin.H{
 			"success": true,
 			"message": "用户登录成功",
@@ -461,10 +461,10 @@ func (con PassController) DoLogin(c *gin.Context) {
 	}
 }
 
-//登出操作: 退出登录后,返回到上一页
+// 登出操作: 退出登录后,返回到上一页
 func (con PassController) LoginOut(c *gin.Context) {
-	//删除cookie里面的user执行跳转
-	models.Cookie.Remove(c, "user")
+	//删除session里面的user执行跳转
+	models.ClearUserSession(c)
 	//上一页地址
 	prevPage := c.Request.Referer()
 	if len(prevPage) > 0 {

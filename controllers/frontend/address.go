@@ -12,7 +12,7 @@ type AddressController struct {
 	BaseController
 }
 
-//增加收货地址
+// 增加收货地址
 func (con AddressController) AddAddress(c *gin.Context) {
 	/*
 	   1、获取用户信息以及 表单提交的数据
@@ -22,8 +22,7 @@ func (con AddressController) AddAddress(c *gin.Context) {
 	   5、返回当前用户的所有收货地址返回
 	*/
 	//  1、获取用户信息以及 表单提交的数据
-	user := models.User{}
-	models.Cookie.Get(c, "user", &user)
+	user, _ := models.GetUserBySession(c)
 	name := c.PostForm("name")
 	phone := c.PostForm("phone")
 	address := c.PostForm("address")
@@ -74,8 +73,7 @@ func (con AddressController) GetOneAddressList(c *gin.Context) {
 		return
 	}
 	//2、获取用户id
-	user := models.User{}
-	models.Cookie.Get(c, "user", &user)
+	user, _ := models.GetUserBySession(c)
 
 	//3、查询当前addressId  userID对应的数据
 	addressList := []models.Address{}
@@ -103,8 +101,7 @@ func (con AddressController) EditAddress(c *gin.Context) {
 	   4、查询当前用户的所有收货地址并返回
 	*/
 	// 1、获取用户信息以及 表单修改的数据
-	user := models.User{}
-	models.Cookie.Get(c, "user", &user)
+	user, _ := models.GetUserBySession(c)
 	id, err := models.Int(c.PostForm("id"))
 	name := c.PostForm("name")
 	phone := c.PostForm("phone")
@@ -146,8 +143,7 @@ func (con AddressController) ChangeDefaultAddress(c *gin.Context) {
 	   3、更新当前收货地址的默认收货地址状态为1
 	*/
 	//1、获取当前用户收货地址id 以及用户id
-	user := models.User{}
-	models.Cookie.Get(c, "user", &user)
+	user, _ := models.GetUserBySession(c)
 	addressId, err := models.Int(c.Query("addressId"))
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{

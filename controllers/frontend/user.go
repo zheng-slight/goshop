@@ -3,9 +3,9 @@ package frontend
 //用户中心
 
 import (
+	"github.com/gin-gonic/gin"
 	"goshop/models"
 	"math"
-	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
@@ -13,13 +13,13 @@ type UserController struct {
 	BaseController
 }
 
-//个人中心首页
+// 个人中心首页
 func (con UserController) Index(c *gin.Context) {
 	var tpl = "frontend/user/welcome.html"
 	con.Render(c, tpl, gin.H{})
 }
 
-//我的订单列表
+// 我的订单列表
 func (con UserController) OrderList(c *gin.Context) {
 	// 页码数: 当前页
 	page, _ := models.Int(c.Query("page"))
@@ -30,8 +30,7 @@ func (con UserController) OrderList(c *gin.Context) {
 	pageSize := 2
 
 	//获取当前用户
-	user := models.User{}
-	models.Cookie.Get(c, "user", &user)
+	user, _ := models.GetUserBySession(c)
 	//模糊查询
 	where := "uid =" + models.String(user.Id)
 	keywords := c.Query("keywords")
@@ -39,7 +38,7 @@ func (con UserController) OrderList(c *gin.Context) {
 	if keywords != "" {
 		//查询订单商品title
 		orderItemList := []models.OrderItem{}
-		models.DB.Where("product_title like ?", "%" + keywords + "%").Find(&orderItemList)
+		models.DB.Where("product_title like ?", "%"+keywords+"%").Find(&orderItemList)
 		//拼接订单id
 		var str string
 		// 字符串：   12,12,22
@@ -56,7 +55,7 @@ func (con UserController) OrderList(c *gin.Context) {
 
 	//获取订单状态: 按照状态筛选订单
 	orderStatus, statusErr := models.Int(c.Query("orderStatus"))
-	if statusErr == nil && orderStatus >= 0 {  // 判断订单状态
+	if statusErr == nil && orderStatus >= 0 { // 判断订单状态
 		where += " AND order_status=" + models.String(orderStatus)
 	} else {
 		orderStatus = -1
@@ -76,11 +75,11 @@ func (con UserController) OrderList(c *gin.Context) {
 		"page":        page,
 		"keywords":    keywords,
 		"orderStatus": orderStatus,
-		"totalPages":  math.Ceil(float64(count) / float64(pageSize)),  //计算总页数
+		"totalPages":  math.Ceil(float64(count) / float64(pageSize)), //计算总页数
 	})
 }
 
-//订单详情
+// 订单详情
 func (con UserController) OrderInfo(c *gin.Context) {
 	//获取有效的订单id
 	id, err := models.Int(c.Query("id"))
@@ -89,8 +88,7 @@ func (con UserController) OrderInfo(c *gin.Context) {
 	}
 
 	//获取用户数据
-	user := models.User{}
-	models.Cookie.Get(c, "user", &user)
+	user, _ := models.GetUserBySession(c)
 	//获取订单数据
 	order := []models.Order{}
 	models.DB.Where("id = ? And uid = ?", id, user.Id).Preload("OrderItem").Find(&order)

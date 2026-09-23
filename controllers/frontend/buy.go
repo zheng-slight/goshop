@@ -14,7 +14,7 @@ type BuyController struct {
 	BaseController
 }
 
-//确认订单页面
+// 确认订单页面
 func (con BuyController) Checkout(c *gin.Context) {
 	//获取购物车中选择的商品
 	cartList := []models.Cart{}
@@ -36,8 +36,7 @@ func (con BuyController) Checkout(c *gin.Context) {
 
 	//获取当前用户的收货地址
 	//获取用户
-	user := models.User{}
-	models.Cookie.Get(c, "user", &user)
+	user, _ := models.GetUserBySession(c)
 	addressList := []models.Address{}
 	fmt.Println(user)
 	//通过用户id获取收货地址列表
@@ -50,13 +49,13 @@ func (con BuyController) Checkout(c *gin.Context) {
 	session.Save()
 
 	//判断orderList数据是否存在
-	if len(orderList) == 0 {  //不存在,则跳转到购物车页面
+	if len(orderList) == 0 { //不存在,则跳转到购物车页面
 		c.Redirect(http.StatusFound, "/cart")
 		return
 	}
 
 	con.Render(c, "frontend/buy/checkout.html", gin.H{
-		"orderList": orderList,
+		"orderList":   orderList,
 		"allPrice":    allPrice,
 		"allNum":      allNum,
 		"addressList": addressList,
@@ -66,14 +65,15 @@ func (con BuyController) Checkout(c *gin.Context) {
 
 /*
 提交订单执行结算
-   1.防止重复提交订单
-   2.获取用户信息 ,获取用户的收货地址信息
-   3.获取购买商品的信息
-   4.把订单信息放在订单表，把商品信息放在订单商品表
-   5.删除购物车里面的选中数据
-   6.跳转到支付页面
+
+	1.防止重复提交订单
+	2.获取用户信息 ,获取用户的收货地址信息
+	3.获取购买商品的信息
+	4.把订单信息放在订单表，把商品信息放在订单商品表
+	5.删除购物车里面的选中数据
+	6.跳转到支付页面
 */
-		func (con BuyController) DoCheckout(c *gin.Context) {
+func (con BuyController) DoCheckout(c *gin.Context) {
 	//1.防止重复提交订单
 	//获取签名
 	orderSignClient := c.PostForm("orderSign")
@@ -82,7 +82,7 @@ func (con BuyController) Checkout(c *gin.Context) {
 	orderSignSession := session.Get("orderSign")
 	//进行类型断言,转换成string类型
 	orderSignServer, ok := orderSignSession.(string)
-	if !ok {  //转换失败或者没有签名,则跳转到 '购物车' 页面
+	if !ok { //转换失败或者没有签名,则跳转到 '购物车' 页面
 		c.Redirect(http.StatusFound, "/cart")
 		return
 	}
@@ -96,9 +96,8 @@ func (con BuyController) Checkout(c *gin.Context) {
 	session.Save()
 
 	// 2.获取用户信息,获取用户的收货地址信息
-	user := models.User{}
-	models.Cookie.Get(c, "user", &user)
-    //定义用户默认收货地址结构体
+	user, _ := models.GetUserBySession(c)
+	//定义用户默认收货地址结构体
 	addressResult := []models.Address{}
 	models.DB.Where("uid = ? AND default_address = 1", user.Id).Find(&addressResult)
 	//判断是否存在默认收货地址,如果不存在,则跳转到'确认订单'页面
@@ -169,16 +168,15 @@ func (con BuyController) Checkout(c *gin.Context) {
 	c.Redirect(http.StatusFound, "/buy/pay?orderId="+models.String(order.Id))
 }
 
-//支付:去支付页面
+// 支付:去支付页面
 func (con BuyController) Pay(c *gin.Context) {
 	//获取订单id
 	orderId, err := models.Int(c.Query("orderId"))
-	if err != nil {  // 订单id类型错误
+	if err != nil { // 订单id类型错误
 		c.Redirect(http.StatusFound, "/cart")
 	}
 	//获取用户信息
-	user := models.User{}
-	models.Cookie.Get(c, "user", &user)
+	user, _ := models.GetUserBySession(c)
 	//获取订单信息
 	order := models.Order{}
 	models.DB.Where("id = ?", orderId).Find(&order)
@@ -197,7 +195,7 @@ func (con BuyController) Pay(c *gin.Context) {
 	})
 }
 
-//查看订单支付状态
+// 查看订单支付状态
 func (con BuyController) OrderPayStatus(c *gin.Context) {
 	id, err := models.Int(c.Query("id"))
 	if err != nil {
@@ -208,8 +206,7 @@ func (con BuyController) OrderPayStatus(c *gin.Context) {
 		return
 	}
 	//获取用户信息
-	user := models.User{}
-	models.Cookie.Get(c, "user", &user)
+	user, _ := models.GetUserBySession(c)
 
 	//获取主订单信息
 	order := models.Order{}
